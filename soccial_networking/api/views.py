@@ -1,17 +1,12 @@
 from django.contrib.auth import authenticate
 from rest_framework import generics, status
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 
+from soccial_networking.api.configurations import CustomPagination, FriendRequestThrottle
 from soccial_networking.api.models import User, FriendRequest
 from soccial_networking.api.serializers import UserSerializer, FriendRequestSerializer
-
-
-class CustomPagination(PageNumberPagination):
-    page_size = 10
 
 
 class SignupView(generics.CreateAPIView):
@@ -41,10 +36,6 @@ class UserSearchView(generics.ListAPIView):
         if "@" in keyword:
             return User.objects.filter(email__iexact=keyword)
         return User.objects.filter(username__icontains=keyword)
-
-
-class FriendRequestThrottle(UserRateThrottle):
-    rate = "3/minute"
 
 
 class SendFriendRequestView(APIView):
