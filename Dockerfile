@@ -11,12 +11,8 @@ RUN pip install -r requirements.txt
 # Copy the project files.
 COPY . .
 
-# Run database migrations and collect static files.
-RUN python manage.py makemigrations
-RUN python manage.py migrate
-
 # Expose the port the app runs on.
 EXPOSE 8000
 
-# Start the application.
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Default command to run when container starts.
+CMD ["python3", "./soccial_networking/manage.py", "runserver", "0.0.0.0:8000"]
