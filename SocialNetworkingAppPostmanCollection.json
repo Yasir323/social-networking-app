@@ -1,0 +1,248 @@
+{
+	"info": {
+		"_postman_id": "3adb7ee2-05c7-413e-b4bc-3b182a403ed9",
+		"name": "Social Networking app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"testuser1@example.com\",\r\n  \"username\": \"testuser1\",\r\n  \"password\": \"password123\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/signup/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"signup",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.environment.set(\"authToken\", jsonData.token);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"password123\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Users",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{authToken}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/search/?q=test",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"search",
+						""
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "test"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send Friend Request",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Authorization",
+						"value": "Token {{authToken}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"to_user_id\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/friend-request/send/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"friend-request",
+						"send",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accept/Reject Friend Request",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Authorization",
+						"value": "Token {{authToken}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"request_id\": 1,\r\n  \"action\": \"accept\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/friend-request/manage/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"friend-request",
+						"manage",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Friends",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{authToken}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/friends/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"friends",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Pending Friend Requests",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{authToken}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/friend-requests/pending/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"friend-requests",
+						"pending",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

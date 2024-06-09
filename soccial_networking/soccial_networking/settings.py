@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "api",
+    "rest_framework.authtoken",
 ]
 
 MIDDLEWARE = [
@@ -120,12 +121,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
-        # TODO: JWT AUTH
+        "rest_framework.authentication.TokenAuthentication",
     ],
+    "DEFAULT_TOKEN_EXPIRY": timedelta(days=1),
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permission.IsAuthenticated",
+        "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.UserRateThrottle",
@@ -135,3 +135,12 @@ REST_FRAMEWORK = {
         "friend_request": "3/minute"
     }
 }
+
+AUTH_USER_MODEL = "api.User"
+
+AUTHENTICATION_BACKENDS = [
+    # 'django.contrib.auth.backends.ModelBackend',
+    'api.backends.EmailBackend',
+]
+
+DEBUG = True

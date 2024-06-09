@@ -1,12 +1,14 @@
 from django.contrib.auth import authenticate
 from rest_framework import generics, status
+from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.db import connection
 
-from soccial_networking.api.configurations import CustomPagination, FriendRequestThrottle
-from soccial_networking.api.models import User, FriendRequest
-from soccial_networking.api.serializers import UserSerializer, FriendRequestSerializer
+from .configurations import CustomPagination, FriendRequestThrottle
+from .models import User, FriendRequest
+from .serializers import UserSerializer, FriendRequestSerializer
 
 
 class SignupView(generics.CreateAPIView):
@@ -21,8 +23,10 @@ class LoginView(APIView):
         email = request.data.get("email").lower()
         password = request.data.get("password")
         user = authenticate(request, email=email, password=password)
+        # print(connection.queries)
         if user is not None:
-            return Response({"message": "Login Successful"})
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({"token": token.key, "message": "Login Successful"})
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -57,13 +61,16 @@ class ManageFriendRequestView(APIView):
     def post(self, request, *args, **kwargs):
         request_id = request.data.get("request_id")
         action = request.data.get("action")
-        friend_request = FriendRequest.objects.get(id=request_id, to_user=request.user)
-        if action == "accept":
-            friend_request.status = "accepted"
-        elif action == "reject":
-            friend_request.status = "rejected"
-        friend_request.save()
-        return Response({"message": f"Friend request {action}ed"})
+        try:
+            friend_request = FriendRequest.objects.get(id=request_id, to_user=request.user)
+            if action == "accept":
+                friend_request.status = "accepted"
+            elif action == "reject":
+                friend_request.status = "rejected"
+            friend_request.save()
+            return Response({"message": f"Friend request {action}ed"})
+        except FriendRequest.DoesNotExist:
+            return Response({"error": f"Friend request not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ListFriendsView(generics.ListAPIView):

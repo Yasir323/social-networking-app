@@ -1,5 +1,5 @@
 from django.urls import path
-from soccial_networking.api.views import (
+from .views import (
     SignupView,
     LoginView,
     UserSearchView,
